@@ -1,7 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+    
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
+        
+        <PackageId>JIssueSystem.NET</PackageId>
+        <Version>0.1.0</Version>
+        <Authors>TiJ</Authors>
+        <Company>TiJ-code</Company>
+        
+        <Description>Simple GitHub issue reporting via repository dispatch.</Description>
+        <PackageTags>github api issues reporting</PackageTags>
+        
+        <RepositoryUrl>https://github.com/TiJ-code/JIssueLibrary.NET</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>

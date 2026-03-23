@@ -1,0 +1,69 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - "lib-v*"
+
+permissions:
+  contents: write
+  packages: write
+  
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.414
+          
+      - name: Extract tag info
+        id: tags
+        run: |
+          CURRENT_TAG=${GITHUB_REF_NAME}
+          CURRENT_VER=$(echo "$CURRENT_TAG" | sed 's/lib-v//')
+          [ -z "$CURRENT_VER" ] && CURRENT_VER="unknown"
+          
+          echo "CURRENT_VERSION=$CURRENT_VER" >> $GITHUB_OUTPUT
+          echo "name=JIssueSystem.NET Library v$CURRENT_VER" >> $GITHUB_OUTPUT
+        
+      - name: Restore
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+        
+      - name: Package Artifact
+        run: |
+          mkdir -p dist
+          CURRENT_VERSION=${{ steps.tags.outputs.CURRENT_VERSION }}
+          cp bin/Release/net8.0/JIssueSystem*.dll dist/JIssueSystem.NET_v$CURRENT_VERSION.dll
+        
+      - name: Pack
+        run: |
+          dotnet msbuild JIssueSystem.NET.csproj -t:Pack -p:Configuration=Release -p:PackageVersion=${{ steps.tags.outputs.CURRENT_VERSION }} -p:NoBuild=true -p:PackageOutputPath=out
+        
+      - name: Publish to GitHub Packages
+        run: |
+          dotnet nuget push "out/*.nupkg" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release & Upload Artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: dist/*
+          append_body: true
+          make_latest: true
+          name: ${{ steps.tags.outputs.name }}
+          generate_release_notes: true
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
