@@ -26,17 +26,6 @@ public class GitHubPayloadBuilder : IPayloadBuilder
     /// The singleton instance
     /// </summary>
     public static readonly GitHubPayloadBuilder Instance = new();
-
-    private const string JsonTemplate = """
-    {{
-        "event_type": "create-issue",
-        "client_payload": {{
-            "title": "{0}",
-            "body": "{1}",
-            "labels": [{2}]
-        }}
-    }}
-    """;
     
     private GitHubPayloadBuilder() {}
 
@@ -47,13 +36,17 @@ public class GitHubPayloadBuilder : IPayloadBuilder
     /// <returns>a JSON string representing the issue</returns>
     public string BuildPayload(Issue issue)
     {
-        string title = JsonEncodedText.Encode(issue.Title).ToString();
-        string body = JsonEncodedText.Encode(issue.Body).ToString();
-
-        string labels = string.Join(",",
-            issue.Labels.Select(l => $"{JsonEncodedText.Encode(l.Name)}")
-        );
+        var payload = new
+        {
+            event_type = "create-issue",
+            client_payload = new
+            {
+                title = issue.Title,
+                body = issue.Body,
+                labels = issue.Labels.Select(l => l.Name).ToArray(),
+            }
+        };
         
-        return string.Format(JsonTemplate, title, body, labels);
+        return JsonSerializer.Serialize(payload);
     }
 }
