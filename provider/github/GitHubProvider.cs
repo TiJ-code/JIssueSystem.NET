@@ -91,6 +91,8 @@ public class GitHubProvider : AbstractTokenProvider, IIssueProvider
         request.Headers.Add("Authorization", $"Bearer {Token}");
         request.Headers.Add("Accept", "application/vnd.github+json");
         request.Headers.Add("User-Agent", "JIssueSystem");
+        request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
+        request.Headers.Add("Accept", "application/vnd.github+json");
 
         return await Client.SendAsync(request);
     }
