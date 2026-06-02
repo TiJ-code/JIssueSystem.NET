@@ -59,12 +59,12 @@ public class IssueReporter
     /// <param name="issue">the issue to report</param>
     /// <returns>The HTTP response message from the provider.</returns>
     /// <exception cref="InvalidOperationException">Thrown if reporter is not initialised</exception>
-    public async Task<HttpResponseMessage> ReportAsync(Issue issue)
+    public async Task<HttpResponseMessage> ReportAsync(Issue issue, IList<string>? customInfo = null)
     {
         if (!_initialised)
             throw new InvalidOperationException("Reporter not initialised");
 
-        var enriched = Enrich(issue);
+        var enriched = Enrich(issue, customInfo);
         _contract.Validate(enriched.Labels);
         
         return await _provider.Report(enriched);
@@ -80,7 +80,7 @@ public class IssueReporter
     /// </summary>
     public LabelContract Contract => _contract;
     
-    private Issue Enrich(Issue issue)
+    private Issue Enrich(Issue issue, IList<string>? customInfo = null)
     {
         var enrichedLabels = new HashSet<Label>(issue.Labels);
         enrichedLabels.UnionWith(_contract.RequiredLabels.Select(name => new Label(name)));
@@ -88,7 +88,7 @@ public class IssueReporter
         return new Issue
         {
             Title = issue.Title,
-            Body = $"{issue.Body}\n{DeviceUtils.GetDiagnostics()}",
+            Body = $"{issue.Body}\n{DeviceUtils.GetDiagnostics(customInfo)}",
             Labels = enrichedLabels,
         };
     }
