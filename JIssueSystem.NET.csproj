@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         
         <PackageId>JIssueSystem.NET</PackageId>
-        <Version>0.1.0</Version>
+        <Version>0.2.2</Version>
         <Authors>TiJ</Authors>
         <Company>TiJ-code</Company>
         
