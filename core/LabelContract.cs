@@ -14,6 +14,11 @@ namespace JIssueSystem.NET.Core;
 public class LabelContract
 {
     /// <summary>
+    /// Empty contract including no labels
+    /// </summary>
+    public static readonly LabelContract EmptyContract = new(new  HashSet<string>());
+    
+    /// <summary>
     /// Default contract including "automated-report" label
     /// </summary>
     public static readonly LabelContract DefaultContract = new(new HashSet<string> { "automated-report" });

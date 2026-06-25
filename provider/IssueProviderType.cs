@@ -1,4 +1,5 @@
 using JIssueSystem.NET.Api;
+using JIssueSystem.NET.Provider.endpoint;
 using JIssueSystem.NET.Provider.GitHub;
 
 namespace JIssueSystem.NET.Provider;
@@ -30,6 +31,13 @@ public sealed class IssueProviderType
     /// </summary>
     public static readonly IssueProviderType GitHub =
         new((owner, repo, token) => new GitHubProvider(owner, repo, token));
+
+    /// <summary>
+    /// Simple no-auth endpoint issue provider builder function.
+    /// </summary>
+    public static EndpointProvider CreateEndpointProvider(string url, IPayloadBuilder? customPayloadBuilder = null) => 
+        new(url, customPayloadBuilder);
+    
     
     /// <summary>
     /// Factory used to create the provider instance for this type.
