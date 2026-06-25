@@ -26,7 +26,7 @@ public static class DeviceUtils
             string customDiagnostics = string.Empty;
             
             foreach (string? diagnostic in customInfo)
-                customDiagnostics += $"* {diagnostic}\n";
+                customDiagnostics += $"{diagnostic}\n";
 
             total = $@"
 
