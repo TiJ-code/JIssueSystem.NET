@@ -33,10 +33,20 @@ public sealed class IssueProviderType
         new((owner, repo, token) => new GitHubProvider(owner, repo, token));
 
     /// <summary>
-    /// Simple no-auth endpoint issue provider builder function.
+    /// Endpoint issue provider builder function.
     /// </summary>
-    public static EndpointProvider CreateEndpointProvider(string url, IPayloadBuilder? customPayloadBuilder = null) => 
-        new(url, customPayloadBuilder);
+    /// <param name="url">The URL used to fetch labels and report issues.</param>
+    /// <param name="customPayloadBuilder">An optional custom issue payload builder.</param>
+    /// <param name="requestHeaders">Optional headers to send with both requests.</param>
+    /// <param name="labelQueryParameters">Optional query parameters sent when fetching labels.</param>
+    /// <param name="reportPayloadProperties">Optional properties added to every report payload.</param>
+    public static EndpointProvider CreateEndpointProvider(
+        string url,
+        IPayloadBuilder? customPayloadBuilder = null,
+        IReadOnlyDictionary<string, string>? requestHeaders = null,
+        IReadOnlyDictionary<string, string>? labelQueryParameters = null,
+        IReadOnlyDictionary<string, string>? reportPayloadProperties = null) =>
+        new(url, customPayloadBuilder, requestHeaders, labelQueryParameters, reportPayloadProperties);
     
     
     /// <summary>
